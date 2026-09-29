@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: webapp
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+          - env: prod
+  template:
+    metadata:
+      name: 'webapp-{{env}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/OlimovShahboz/gitopsdemo.git
+        targetRevision: main
+        path: charts/webapp
+        helm:
+          valueFiles:
+            - values.yaml
+            - 'values-{{env}}.yaml'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'webapp-{{env}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
