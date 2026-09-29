@@ -1,0 +1,5 @@
+ingress:
+  host: webapp-dev.local
+autoscaling:
+  minReplicas: 1
+  maxReplicas: 2
